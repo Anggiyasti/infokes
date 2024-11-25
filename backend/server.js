@@ -1,72 +1,69 @@
-import React, { useEffect, useState } from 'react';
+require('dotenv').config();
 
-// eslint-disable-next-line react/prop-types
-const FileExplorer = ({ folderId, folderName }) => {
-  const [subFolders, setSubFolders] = useState([]);
-  const [selectedFolderId, setSelectedFolderId] = useState(null);
-  const [files, setFiles] = useState([]);
+const express = require('express');
+const bodyParser = require('body-parser');
+const mysql = require('mysql2');
+const cors = require('cors');
 
-  // Ambil subfolder ketika folderId berubah
-  useEffect(() => {
-    if (folderId) {
-      fetch(`http://localhost:8001/api/v1/sub_folders/${folderId}`)
-        .then((response) => response.json())
-        .then((data) => setSubFolders(data))
-        .catch((err) => console.error('Error fetching subfolders:', err));
+const app = express();
+app.use(bodyParser.json());
+app.use(cors());
+const port = 8001;
+
+const db = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT,
+});
+
+db.connect((err) => {
+    if (err) {
+      console.error('Database connection failed: ' + err.stack);
+      return;
     }
-  }, [folderId]);
+    console.log('Connected to database');
+});
 
-  // Ambil file dalam subfolder yang dipilih
-  useEffect(() => {
-    if (selectedFolderId) {
-      fetch(`http://localhost:8001/api/v1/files/${selectedFolderId}`)
-        .then((response) => response.json())
-        .then((data) => setFiles(data))
-        .catch((err) => console.error('Error fetching files:', err));
-    }
-  }, [selectedFolderId]);
+app.get('/api/v1/folders', (req, res) => {
+    const query = 'SELECT * FROM folders ORDER BY name ASC';
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error retrieving folders');
+        return;
+      }
+      res.json(results);
+    });
+});
 
-  // Handler untuk klik pada subfolder
-  const handleSubfolderClick = (subfolderId) => {
-    setSelectedFolderId(subfolderId);
-    setFiles([]); // Reset files before fetching
-  };
+app.get('/api/v1/sub_folders/:folderId', (req, res) => {
+    const folderId = req.params.folderId;
+    const query = 'SELECT * FROM sub_folders WHERE folder_id = ?';
+    db.query(query, [folderId], (err, results) => {
+        if (err) {
+        console.error(err);
+        res.status(500).send('Error retrieving sub folders');
+        return;
+        }
+        res.json(results);
+    });
+});
 
-  return (
-    <div>
-      {folderId ? (
-        <>
-          <h3>Subfolders in {folderName}</h3>
-          {subFolders.length === 0 ? (
-            <p>This folder is empty</p>
-          ) : (
-            <ul>
-              {subFolders.map((folder) => (
-                <li key={folder.id} onClick={() => handleSubfolderClick(folder.id)}>
-                  {folder.name}
-                </li>
-              ))}
-            </ul>
-          )}
-
-          {selectedFolderId && (
-            <>
-              <h4>Files in {subFolders.find((folder) => folder.id === selectedFolderId)?.name}</h4>
-              {files.length > 0 && (
-                <ul>
-                  {files.map((file) => (
-                    <li key={file.id}>{file.name}</li>
-                  ))}
-                </ul>
-              )}
-            </>
-          )}
-        </>
-      ) : (
-        <p>Select a folder to see its subfolders</p>
-      )}
-    </div>
-  );
-};
-
-export default FileExplorer;
+app.get('/api/v1/files/:subFolderId', (req, res) => {
+    const folderId = req.params.folderId;
+    const query = 'SELECT * FROM files WHERE sub_folder_id = ?';
+    db.query(query, [folderId], (err, results) => {
+        if (err) {
+        console.error(err);
+        res.status(500).send('Error retrieving files');
+        return;
+        }
+        res.json(results);
+    });
+});
+  
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});

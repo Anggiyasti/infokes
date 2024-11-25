@@ -60,11 +60,11 @@ Before starting, make sure you have the following installed on your machine:
     ```bash
     npm start
     ```
-    The frontend will now be running on `http://localhost:3000`.
+    The frontend will now be running on `http://localhost:5173`.
 
 ## Usage
 
-- Open your browser and navigate to `http://localhost:3000`.
+- Open your browser and navigate to `http://localhost:5173`.
 - The app will load the folder structure on the left panel.
 - Click on any folder to view its subfolders.
 - If the folder has files, they will be displayed on the right panel.
