@@ -1,0 +1,134 @@
+/* Global styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Container untuk explorer dengan dua panel */
+.explorer-container {
+  display: flex;
+  height: 100vh;
+  background-color: #e1e1e1;
+}
+
+/* Panel kiri untuk daftar folder */
+.folder-panel {
+  width: 250px;
+  background-color: #2f4f6e;
+  color: #ffffff;
+  padding: 15px;
+  overflow-y: auto;
+  border-right: 1px solid #ccc;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.folder-panel h3 {
+  font-size: 1.2em;
+  color: #e5e5e5;
+  margin-bottom: 20px;
+}
+
+/* Daftar folder di panel kiri */
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+li {
+  padding: 8px 15px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, padding-left 0.2s ease;
+}
+
+li:hover {
+  background-color: #4a6c89;
+}
+
+li.selected {
+  background-color: #3d5d74;
+  color: #fff;
+  padding-left: 20px;
+}
+
+li i {
+  margin-right: 8px;
+}
+
+/* Panel kanan untuk menampilkan subfolder */
+.file-panel {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #ffffff;
+  overflow-y: auto;
+}
+
+/* Heading subfolder */
+h3 {
+  font-size: 1.6em;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Daftar subfolder */
+ul.subfolders {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+ul.subfolders li {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 6px;
+  width: 120px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Efek hover pada subfolder */
+ul.subfolders li:hover {
+  transform: scale(1.05);
+  background-color: #d3d3d3;
+}
+
+ul.subfolders li.selected {
+  background-color: #c5e1e1;
+}
+
+/* Ikon folder */
+ul.subfolders li i {
+  font-size: 40px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* Notifikasi ketika tidak ada subfolder */
+.file-panel p {
+  font-size: 1.2em;
+  color: #888;
+  text-align: center;
+  margin-top: 50px;
+}
+
+/* Responsif - ketika layar kecil */
+@media (max-width: 768px) {
+  .explorer-container {
+    flex-direction: column;
+  }
+
+  .folder-panel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .file-panel {
+    width: 100%;
+  }
+}
